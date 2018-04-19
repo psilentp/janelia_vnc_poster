@@ -1,0 +1,43 @@
+Intro:
+- Add Model from paper
+- Kinefly image
+- Hinge images
+
+Figure 1:
+- Add times
+- Change colors
+- Spine lables
+
+Figure 2:
+- Bias indication
+- Spine Labels
+
+Figure 3:
+- Colors:scatter plot and ts
+
+Figure 4:
+- Add setup image
+- Add Kernel plot
+- Labels on spines
+- Add avspan highlight and breakout
+- Muscle labels 
+- Add Key
+
+Figure 5:
+- Change neuron colors
+- Change connection colors
+- Add key
+
+Figure 6:
+- fix label overlap
+- Breakout a few comparisons
+- Change colors (raster-left right traces)
+- Fix timescale
+
+Figure 7:
+- Add full state transition analysis (distribution of all possible states)
+- Motivate pruned transition matrix.
+- Add simulation from shuffled tmtrx
+
+Figure 8:
+- Add key, dwell times, state occupancy.
