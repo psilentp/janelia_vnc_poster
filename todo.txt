@@ -4,13 +4,13 @@ X Kinefly image
 X Hinge images
 
 Figure 1:
-- Add times
-- Change colors
-- Spine lables
+X Add times
+X Change colors
+X Spine lables
 
 Figure 2:
-- Bias indication
-- Spine Labels
+X Bias indication
+X Spine Labels
 
 Figure 3:
 - Colors:scatter plot and ts

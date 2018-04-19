@@ -217,6 +217,67 @@ layout.axes['coup_state'].set_ybound(-0.05,1.15)
 
 
 ##########################
+#  Example traces        #
+##########################
+
+example_group  = layout.axes_groups['none']['examples']
+fly = flylist[-9]
+snum =4
+idx = fly.block_data['common','idx','cl_blocks, g_x=-1, g_y=0 b_x=0, b_y=0'][snum]
+tms = np.array(fly.time)[idx]
+tms -= tms[0]
+
+c_l = layout.pathspecs['lb-nu'].mplkwargs()['edgecolor']
+c_r = layout.pathspecs['rb-nu'].mplkwargs()['edgecolor']
+
+yrng = slice(100,400)
+xrng = slice(50,450)
+example_group['kinefly'].imshow(fly.kine_cam_1[idx[125]].T[:,::-1][yrng,xrng],cmap = plt.cm.gray)
+example_group['left_hinge'].imshow(fly.ca_cam_left[idx[125]][:,::-1][:,:150]**1.2,vmin = 0,vmax = 450,cmap = plt.cm.gray)
+example_group['right_hinge'].imshow(fly.ca_cam_right[idx[125]][:,::-1][:,50:]**1.2,vmin = 0,vmax = 450,cmap = plt.cm.gray)
+
+example_group['wing_kine'].plot(tms,np.rad2deg(np.array(fly.left_amp)[idx]),color = c_l)
+example_group['wing_kine'].plot(tms,np.rad2deg(np.array(fly.right_amp)[idx]),color = c_r)
+example_group['wing_kine'].set_ybound(25,65)
+example_group['wing_kine'].set_yticks([25,35,45,55,65])
+example_group['wing_kine'].set_ylabel('Stroke amp\n(deg)')
+
+example_group['i1'].plot(tms,fly.non_neg_signals['left','i1'][idx],color = c_l)
+example_group['i1'].plot(tms,fly.non_neg_signals['right','i1'][idx],color = c_r)
+example_group['i1'].set_ybound(0,1)
+example_group['i1'].set_yticks([0,1])
+example_group['i1'].set_ylabel('i1 GCaMP\n(AU)')
+
+example_group['iii3'].plot(tms,fly.non_neg_signals['left','iii3'][idx],color = c_l)
+example_group['iii3'].plot(tms,fly.non_neg_signals['right','iii3'][idx],color = c_r)
+example_group['iii3'].set_ybound(0,1)
+example_group['iii3'].set_yticks([0,1])
+example_group['iii3'].set_ylabel('iii3 GCaMP\n(AU)')
+
+example_group['b3'].plot(tms,fly.non_neg_signals['left','b3'][idx],color = c_l)
+example_group['b3'].plot(tms,fly.non_neg_signals['right','b3'][idx],color = c_r)
+example_group['b3'].set_ybound(0,1)
+example_group['b3'].set_yticks([0,1])
+example_group['b3'].set_ylabel('b3 GCaMP\n(AU)')
+example_group['b3'].set_xlabel('time (s)')
+
+example_group['l_vs_r'].plot(np.rad2deg(np.array(fly.left_amp)[idx]),
+                             np.rad2deg(np.array(fly.right_amp)[idx]),color = 'k')
+example_group['l_vs_r'].set_xbound(25,65)
+example_group['l_vs_r'].set_ybound(25,65)
+
+example_group['l_vs_r'].set_ylabel('right amp',color = c_r)
+example_group['l_vs_r'].set_xlabel('left amp',color = c_l)
+
+example_group['muscle_vs_muscle'].plot(fly.non_neg_signals['left','iii3'][idx],
+                                       fly.non_neg_signals['right','b3'][idx],color = 'k')
+example_group['muscle_vs_muscle'].set_xbound(0,1)
+example_group['muscle_vs_muscle'].set_ybound(0,1)
+example_group['muscle_vs_muscle'].set_ylabel('right b3',color = c_r)
+example_group['muscle_vs_muscle'].set_xlabel('left iii3',color = c_l)
+
+
+##########################
 #  Scatter Plots         #
 ##########################
 
@@ -226,68 +287,31 @@ ax = layout.axes_groups['none']['expanded_inset']['kinematics']
 lpf.plot_sector_kine(flylist,'nb-nu',ax,layout.pathspecs,rng = (25,95),mode = 'kde',contours = True)
 lpf.plot_sector_kine(flylist,'rb-nu',ax,layout.pathspecs,rng = (25,95),mode = 'kde',contours = True)
 lpf.plot_sector_kine(flylist,'lb-nu',ax,layout.pathspecs,rng = (25,95),mode = 'kde',contours = True)
-ax.set_xbound(25,90),ax.set_ybound(25,90)
+ax.set_xbound(25,90),ax.set_ybound(25,90),ax.set_xlabel('left amp',color = c_l),ax.set_ylabel('right amp',color = c_r)
 
 ax = layout.axes_groups['none']['expanded_inset']['Lb3-Rb3']
 lpf.plot_sector(flylist,('left','b3'),('right','b3'),'nb-nu',ax,layout.pathspecs,mode = 'kde',contours = True)
 lpf.plot_sector(flylist,('left','b3'),('right','b3'),'rb-nu',ax,layout.pathspecs,mode = 'kde',contours = True)
 lpf.plot_sector(flylist,('left','b3'),('right','b3'),'lb-nu',ax,layout.pathspecs,mode = 'kde',contours = True)
-ax.set_xbound(0,1),ax.set_ybound(0,1)
+ax.set_xbound(0,1),ax.set_ybound(0,1),ax.set_xlabel('left b3',color = c_l),ax.set_ylabel('right b3',color = c_r)
 
 ax = layout.axes_groups['none']['expanded_inset']['Liii3-Riii3']
 lpf.plot_sector(flylist,('left','iii3'),('right','iii3'),'nb-nu',ax,layout.pathspecs,mode = 'kde',contours = True)
 lpf.plot_sector(flylist,('left','iii3'),('right','iii3'),'rb-nu',ax,layout.pathspecs,mode = 'kde',contours = True)
 lpf.plot_sector(flylist,('left','iii3'),('right','iii3'),'lb-nu',ax,layout.pathspecs,mode = 'kde',contours = True)
-ax.set_xbound(0,1),ax.set_ybound(0,1)
+ax.set_xbound(0,1),ax.set_ybound(0,1),ax.set_xlabel('left iii3',color = c_l),ax.set_ylabel('right iii3',color = c_r)
 
 ax = layout.axes_groups['none']['expanded_inset']['Lb3-Riii3']
 lpf.plot_sector(flylist,('left','b3'),('right','iii3'),'nb-nu',ax,layout.pathspecs,mode = 'kde',contours = True)
 lpf.plot_sector(flylist,('left','b3'),('right','iii3'),'rb-nu',ax,layout.pathspecs,mode = 'kde',contours = True)
 lpf.plot_sector(flylist,('left','b3'),('right','iii3'),'lb-nu',ax,layout.pathspecs,mode = 'kde',contours = True)
-ax.set_xbound(0,1),ax.set_ybound(0,1)
+ax.set_xbound(0,1),ax.set_ybound(0,1),ax.set_xlabel('left b3',color = c_l),ax.set_ylabel('right iii3',color = c_r)
 
 ax = layout.axes_groups['none']['expanded_inset']['Ri1-Lhg1']
-lpf.plot_sector(flylist,('right','i1'),('left','hg1'),'nb-nu',ax,layout.pathspecs,mode = 'kde',contours = True)
-lpf.plot_sector(flylist,('right','i1'),('left','hg1'),'rb-nu',ax,layout.pathspecs,mode = 'kde',contours = True)
-lpf.plot_sector(flylist,('right','i1'),('left','hg1'),'lb-nu',ax,layout.pathspecs,mode = 'kde',contours = True)
-ax.set_xbound(0,1),ax.set_ybound(0,1)
-
-##########################
-#  Example traces        #
-##########################
-
-example_group  = layout.axes_groups['none']['examples']
-fly = flylist[-9]
-snum =4
-idx = fly.block_data['common','idx','cl_blocks, g_x=-1, g_y=0 b_x=0, b_y=0'][snum]
-
-yrng = slice(100,400)
-xrng = slice(50,450)
-example_group['kinefly'].imshow(fly.kine_cam_1[idx[125]].T[yrng,xrng],cmap = plt.cm.gray)
-example_group['left_hinge'].imshow(fly.ca_cam_right[idx[125]][:,::-1][:,:150]**1.2,vmin = 0,vmax = 450,cmap = plt.cm.gray)
-example_group['right_hinge'].imshow(fly.ca_cam_left[idx[125]][:,::-1][:,50:]**1.2,vmin = 0,vmax = 450,cmap = plt.cm.gray)
-
-example_group['wing_kine'].plot(np.rad2deg(np.array(fly.left_amp)[idx]))
-example_group['wing_kine'].plot(np.rad2deg(np.array(fly.right_amp)[idx]))
-
-example_group['i1'].plot(fly.non_neg_signals['left','i1'][idx])
-example_group['i1'].plot(fly.non_neg_signals['right','i1'][idx])
-
-example_group['iii3'].plot(fly.non_neg_signals['left','iii3'][idx])
-example_group['iii3'].plot(fly.non_neg_signals['right','iii3'][idx])
-
-example_group['b3'].plot(fly.non_neg_signals['left','b3'][idx])
-example_group['b3'].plot(fly.non_neg_signals['right','b3'][idx])
-
-example_group['l_vs_r'].plot(np.rad2deg(np.array(fly.left_amp)[idx]),
-                             np.rad2deg(np.array(fly.right_amp)[idx]))
-example_group['l_vs_r'].set_xbound(25,65)
-example_group['l_vs_r'].set_ybound(25,65)
-
-example_group['muscle_vs_muscle'].plot(fly.non_neg_signals['left','iii3'][idx],
-                                       fly.non_neg_signals['right','b3'][idx])
-example_group['muscle_vs_muscle'].set_xbound(0,1)
-example_group['muscle_vs_muscle'].set_ybound(0,1)
+lpf.plot_sector(flylist,('left','hg1'),('right','i1'),'nb-nu',ax,layout.pathspecs,mode = 'kde',contours = True)
+lpf.plot_sector(flylist,('left','hg1'),('right','i1'),'rb-nu',ax,layout.pathspecs,mode = 'kde',contours = True)
+lpf.plot_sector(flylist,('left','hg1'),('right','i1'),'lb-nu',ax,layout.pathspecs,mode = 'kde',contours = True)
+ax.set_xbound(0,1),ax.set_ybound(0,1),ax.set_xlabel('left hg1',color = c_l),ax.set_ylabel('right i1',color = c_r)
 
 ##########################
 #  Spike deconvolution   #
