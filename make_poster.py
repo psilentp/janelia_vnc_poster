@@ -113,13 +113,20 @@ tmtrx_coup = [[0.12,    0.38,    0.38,     0.12],
               [0.08,    0.76,    0.08,     0.08],
               [0.08,    0.08,    0.76,     0.08],
               [0.12,    0.38,    0.38,     0.12]]
+
+
 tmtrx_coup = np.array(tmtrx_coup).T
 print(np.sum(tmtrx_coup,axis = 0))
 
-tmtrx_ind = [[0.76,    0.08,    0.08,     0.08],
-             [0.08,    0.76,    0.08,     0.08],
-             [0.08,    0.08,    0.76,     0.08],
-             [0.32,    0.32,    0.32,     0.04]]
+#tmtrx_ind = [[0.76,    0.08,    0.08,     0.08],
+#             [0.08,    0.76,    0.08,     0.08],
+#             [0.08,    0.08,    0.76,     0.08],
+#             [0.32,    0.32,    0.32,     0.04]]
+
+tmtrx_ind = [[0.70,    0.14,    0.14,     0.02],
+             [0.30,    0.66,    0.02,     0.02],
+             [0.30,    0.02,    0.66,     0.02],
+             [0.97,    0.01,    0.01,     0.01]]
 
 tmtrx_ind = np.array(tmtrx_ind).T
 print(np.sum(tmtrx_ind,axis = 0))
@@ -153,7 +160,6 @@ cell_B_ind_F = scipy.signal.convolve(np.squeeze(cell_B_ind),slow_kernel)
 cell_A_coup_F = scipy.signal.convolve(np.squeeze(cell_A_coup),slow_kernel)
 cell_B_coup_F =scipy.signal.convolve(np.squeeze(cell_B_coup),slow_kernel)
 
-
 layout.axes['ind_transition'].pcolor(tmtrx_ind[:,::-1].T,cmap = plt.cm.viridis)
 layout.axes['coup_transition'].pcolor(tmtrx_coup[:,::-1].T,cmap = plt.cm.viridis)
 
@@ -182,20 +188,31 @@ layout.axes['ind_cell_B'].set_zorder(-10)
 layout.axes['coup_cell_A'].set_zorder(-10)
 layout.axes['coup_cell_B'].set_zorder(-10)
 
-layout.axes['ind_cell_A_ts'].plot(times[1500:1600]-times[1500],cell_A_ind_F[1500:1600])
-layout.axes['ind_cell_B_ts'].plot(times[1500:1600]-times[1500],cell_B_ind_F[1500:1600])
+layout.axes['ind_cell_A_ts'].plot(times[1500:1600]-times[1500],cell_A_ind_F[1500:1600], color = 'r')
+layout.axes['ind_cell_B_ts'].plot(times[1500:1600]-times[1500],cell_B_ind_F[1500:1600], color = 'r')
 
-layout.axes['coup_cell_A_ts'].plot(times[1500:1600]-times[1500],cell_A_coup_F[1500:1600])
-layout.axes['coup_cell_B_ts'].plot(times[1500:1600]-times[1500],cell_B_coup_F[1500:1600])
+layout.axes['coup_cell_A_ts'].plot(times[1500:1600]-times[1500],cell_A_coup_F[1500:1600],color = 'r')
+layout.axes['coup_cell_B_ts'].plot(times[1500:1600]-times[1500],cell_B_coup_F[1500:1600],color = 'r')
+layout.axes['coup_cell_B_ts'].set_xlabel('time (s)')
 
 layout.axes['ind_cell_A_ts'].patch.set_facecolor('None')
 layout.axes['ind_cell_B_ts'].patch.set_facecolor('None')
-
 layout.axes['coup_cell_A_ts'].patch.set_facecolor('None')
 layout.axes['coup_cell_B_ts'].patch.set_facecolor('None')
 
-layout.axes['ind_GCaMP_state'].plot(cell_A_ind_F[1000:-5000:10],cell_B_ind_F[1000:-5000:10],'o',alpha = 0.2)
-layout.axes['coup_GCaMP_state'].plot(cell_A_coup_F[1000:-5000:10],cell_B_coup_F[1000:-5000:10],'o',alpha = 0.2)
+layout.axes['ind_GCaMP_state'].plot(cell_A_ind_F[1000:-5000:10],cell_B_ind_F[1000:-5000:10],'o',alpha = 0.2,color = 'k')
+layout.axes['coup_GCaMP_state'].plot(cell_A_coup_F[1000:-5000:10],cell_B_coup_F[1000:-5000:10],'o',alpha = 0.2,color = 'k')
+###########
+layout.axes['ind_GCaMP_state'].set_xlabel('cell A')
+layout.axes['coup_GCaMP_state'].set_xlabel('cell A')
+layout.axes['ind_GCaMP_state'].set_ylabel('cell B')
+layout.axes['coup_GCaMP_state'].set_ylabel('cell B')
+########
+layout.axes['ind_GCaMP_state'].set_xbound(0,16)
+layout.axes['coup_GCaMP_state'].set_xbound(0,16)
+
+layout.axes['ind_GCaMP_state'].set_ybound(0,16)
+layout.axes['coup_GCaMP_state'].set_ybound(0,16)
 
 arrow_params = dict(shape = 'right',width = 0.01,length_includes_head = True,facecolor = 'k',clip_on = False)
 layout.axes['ind_state'].arrow(1.1,0.1,0,0.9,**arrow_params)
@@ -204,8 +221,8 @@ layout.axes['ind_state'].arrow(1.2,1.0,0,-0.9,**arrow_params)
 layout.axes['ind_state'].arrow(1,1,-0.9,0,**arrow_params)
 layout.axes['ind_state'].arrow(0.1,1.1,0.9,0,**arrow_params)
 
-layout.axes['ind_state'].arrow(0.9,0.0,-0.9,0.9,**arrow_params)
-layout.axes['ind_state'].arrow(0.1,0.9,0.9,-0.9,**arrow_params)
+#layout.axes['ind_state'].arrow(0.9,0.0,-0.9,0.9,**arrow_params)
+#layout.axes['ind_state'].arrow(0.1,0.9,0.9,-0.9,**arrow_params)
 
 layout.axes['coup_state'].arrow(0.9,0,-0.9,0.9,**arrow_params)
 layout.axes['coup_state'].arrow(0.1,0.9,0.9,-0.9,**arrow_params)
@@ -233,8 +250,8 @@ c_r = layout.pathspecs['rb-nu'].mplkwargs()['edgecolor']
 yrng = slice(100,400)
 xrng = slice(50,450)
 example_group['kinefly'].imshow(fly.kine_cam_1[idx[125]].T[:,::-1][yrng,xrng],cmap = plt.cm.gray)
-example_group['left_hinge'].imshow(fly.ca_cam_left[idx[125]][:,::-1][:,:150]**1.2,vmin = 0,vmax = 450,cmap = plt.cm.gray)
-example_group['right_hinge'].imshow(fly.ca_cam_right[idx[125]][:,::-1][:,50:]**1.2,vmin = 0,vmax = 450,cmap = plt.cm.gray)
+example_group['left_hinge'].imshow(fly.ca_cam_left[idx[125]][:,::-1][:,50:]**1.2,vmin = 0,vmax = 450,cmap = plt.cm.gray)
+example_group['right_hinge'].imshow(fly.ca_cam_right[idx[125]][:,::-1][:,:150]**1.2,vmin = 0,vmax = 450,cmap = plt.cm.gray)
 
 example_group['wing_kine'].plot(tms,np.rad2deg(np.array(fly.left_amp)[idx]),color = c_l)
 example_group['wing_kine'].plot(tms,np.rad2deg(np.array(fly.right_amp)[idx]),color = c_r)
@@ -336,6 +353,11 @@ layout.axes['decon_spikes_inset'].plot(ep_times,i1_spike_sig*-1,color = 'k')
 layout.axes['decon_spikes_inset'].set_xbound(40.0,41.5)
 layout.axes['decon_spikes_inset'].set_xticks([40,40.5,41.0,41.5])
 
+layout.axes['decon_kernel'].plot(np.linspace(0,1.,1000),
+                                 make_single_kernel(np.linspace(0,1.,1000),
+                                 TAU_ON_S,TAU_OFF_S))
+layout.axes['decon_kernel'].set_xlabel('time (s)')
+layout.axes['decon_kernel'].set_ylabel('GCaMP response')
 
 ##########################
 # Markov sequence panels #
