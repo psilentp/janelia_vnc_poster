@@ -25,6 +25,7 @@ def plot_trig_panel(ax_group,
                     state_mtrx_dict = None,
                     sorted_keys = None,
                     flydict = None):
+    from matplotlib import pyplot as plt
     time = np.arange(pretrig+posttrig)*ts
     idx_list = get_transitions(state_mtrx_dict,trig_key,pretrig,posttrig)
     signal_mtrxs = {}
@@ -36,7 +37,7 @@ def plot_trig_panel(ax_group,
     rast_mtrx = signal_mtrxs[trig_key][filter_cond,:]
     rast_mtrx = rast_mtrx[np.random.randint(0,rast_mtrx.shape[0],size = 100),:]
     ax_group['raster'].imshow(rast_mtrx,
-               aspect = 'auto',interpolation = 'nearest',extent = [0,time[-1],0,100])
+               aspect = 'auto',interpolation = 'nearest',extent = [0,time[-1],0,100],cmap = plt.cm.binary)
     ax_group['raster'].set_ybound(0,100)
     ax_group['kine'].plot(time,np.rad2deg(np.nanmean(signal_mtrxs['left','amp'][filter_cond,:],axis = 0)))
     ax_group['kine'].plot(time,np.rad2deg(np.nanmean(signal_mtrxs['right','amp'][filter_cond,:],axis = 0)))

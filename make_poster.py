@@ -49,8 +49,9 @@ trig_panel_data = dict(ts = ts,
                        sorted_keys = sorted_keys,
                        flydict= flydict)
 def frmt(ax):
-    ax.set_ybound(0,1)
-    ax.set_yticks([0,1])
+    pass
+    #ax.set_ybound(0,1)
+    #ax.set_yticks([0,1])
     
 ax_group = layout.axes_groups['none']['i1_on']
 [frmt(ax) for ax in ax_group['left'].values()]
@@ -200,8 +201,8 @@ layout.axes['ind_cell_B_ts'].patch.set_facecolor('None')
 layout.axes['coup_cell_A_ts'].patch.set_facecolor('None')
 layout.axes['coup_cell_B_ts'].patch.set_facecolor('None')
 
-layout.axes['ind_GCaMP_state'].plot(cell_A_ind_F[1000:-5000:10],cell_B_ind_F[1000:-5000:10],'o',alpha = 0.2,color = 'k')
-layout.axes['coup_GCaMP_state'].plot(cell_A_coup_F[1000:-5000:10],cell_B_coup_F[1000:-5000:10],'o',alpha = 0.2,color = 'k')
+layout.axes['ind_GCaMP_state'].plot(cell_A_ind_F[1000:-5000:10],cell_B_ind_F[1000:-5000:10],'o',alpha = 0.2,color = 'k',clip_on = False)
+layout.axes['coup_GCaMP_state'].plot(cell_A_coup_F[1000:-5000:10],cell_B_coup_F[1000:-5000:10],'o',alpha = 0.2,color = 'k',clip_on = False)
 ###########
 layout.axes['ind_GCaMP_state'].set_xlabel('cell A')
 layout.axes['coup_GCaMP_state'].set_xlabel('cell A')
@@ -333,31 +334,34 @@ ax.set_xbound(0,1),ax.set_ybound(0,1),ax.set_xlabel('left hg1',color = c_l),ax.s
 ##########################
 #  Spike deconvolution   #
 ##########################
-
+max_ca = np.max(decon_fly.ca_camera_left_model_fits['i1'])
 layout.axes['decon_ca_outset'].plot(decon_fly.ca_camera_left_times,
-                        decon_fly.ca_camera_left_model_fits['i1'],color = 'k')
+                        decon_fly.ca_camera_left_model_fits['i1']/max_ca,color = 'k')
 layout.axes['decon_ca_outset'].set_xbound(0,100)
-layout.axes['decon_ca_outset'].set_ylabel('i1 [Ca++] AU')
+layout.axes['decon_ca_outset'].set_ylabel('i1 [Ca++]\n(AU)')
 
 layout.axes['decon_spikes_outset'].plot(ep_times,i1_spike_sig*-1,color = 'k')
 layout.axes['decon_spikes_outset'].set_xbound(0,100)
-layout.axes['decon_spikes_outset'].set_ylabel('i1 EMG')
+layout.axes['decon_spikes_outset'].set_yticks([0,1])
+layout.axes['decon_spikes_outset'].set_ylabel(u'i1 EMG\n(${\mu}$V)')
 
 
 layout.axes['decon_ca_inset'].plot(decon_fly.ca_camera_left_times,
-                               decon_fly.ca_camera_left_model_fits['i1'],color = 'k')
+                               decon_fly.ca_camera_left_model_fits['i1']/max_ca,color = 'k')
 layout.axes['decon_ca_inset'].set_xbound(40,41.5)
 layout.axes['decon_ca_inset'].set_xticks([40,40.5,41.0,41.5])
 
 layout.axes['decon_spikes_inset'].plot(ep_times,i1_spike_sig*-1,color = 'k')
+layout.axes['decon_spikes_inset'].set_yticks([0,1])
 layout.axes['decon_spikes_inset'].set_xbound(40.0,41.5)
 layout.axes['decon_spikes_inset'].set_xticks([40,40.5,41.0,41.5])
+layout.axes['decon_spikes_inset'].set_ylabel(u'i1 EMG\n(${\mu}$V)')
 
 layout.axes['decon_kernel'].plot(np.linspace(0,1.,1000),
-                                 make_single_kernel(np.linspace(0,1.,1000),
-                                 TAU_ON_S,TAU_OFF_S))
+                                 lpf.make_single_kernel(np.linspace(0,1.,1000),
+                                 TAU_ON_S,TAU_OFF_S),color = 'k')
 layout.axes['decon_kernel'].set_xlabel('time (s)')
-layout.axes['decon_kernel'].set_ylabel('GCaMP response')
+layout.axes['decon_kernel'].set_ylabel('GCaMP')
 
 ##########################
 # Markov sequence panels #
@@ -490,5 +494,7 @@ for lr,group in layout.axes_groups['none']['segment_1'].items():
 # finish up #######
 ###################
 
+layout.apply_mpl_methods()
 fifi.mpl_functions.set_spines(layout)
+
 layout.save('poster.svg')

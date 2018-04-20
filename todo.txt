@@ -1,5 +1,5 @@
 Intro:
-- Add Model from paper
+X Add Model from paper
 X Kinefly image 
 X Hinge images
 
@@ -13,13 +13,13 @@ X Bias indication
 X Spine Labels
 
 Figure 3:
-- Colors:scatter plot and ts
+X Colors:scatter plot and ts
 
 Figure 4:
 - Add setup image
-- Add Kernel plot
+X Add Kernel plot
 - Labels on spines
-- Add avspan highlight and breakout
+X Add avspan highlight and breakout
 - Muscle labels 
 - Add Key
 
