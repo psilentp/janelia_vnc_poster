@@ -1,6 +1,6 @@
 reload(lpf)
 
-layout = fifi.FigureLayout('poster_layout.svg',make_mplfigures = True)
+layout = fifi.FigureLayout('layouts/poster_layout.svg',make_mplfigures = True)
 
 
 #######################################
@@ -102,7 +102,7 @@ state_mtrx = np.vstack([fly.spikestates[key][fly.data_mask] for key in sorted_ke
 
 TAU_ON_S = 0.0155905
 TAU_OFF_S = 0.23594343
-times = np.arange(0,90/0.02)*0.02
+times = np.arange(0,180/0.02)*0.02
 slow_kernel = lpf.make_single_kernel(times,TAU_ON_S,TAU_OFF_S)
 
 state_table= [[1,1],
@@ -110,10 +110,10 @@ state_table= [[1,1],
               [1,0],
               [0,0]]
 
-tmtrx_coup = [[0.12,    0.38,    0.38,     0.12],
-              [0.08,    0.76,    0.08,     0.08],
-              [0.08,    0.08,    0.76,     0.08],
-              [0.12,    0.38,    0.38,     0.12]]
+tmtrx_coup = [[0.00,    0.45,    0.45,     0.00],
+              [0.00,    0.80,    0.20,     0.00],
+              [0.00,    0.20,    0.80,     0.00],
+              [0.00,    0.45,    0.45,     0.00]]
 
 
 tmtrx_coup = np.array(tmtrx_coup).T
@@ -150,6 +150,22 @@ for i in range(len(times)):
                                      tmtrx = tmtrx_ind).T)
 state_list_ind = np.array(state_list_ind)
 
+## simulate a coupled network
+state_list_coup = [[0,1]]
+for i in range(len(times)):
+    state_list_coup.append(lpf.next_state(state_list_coup[-1],
+                                     state_table=state_table,
+                                     tmtrx = tmtrx_coup).T)
+state_list_coup = np.array(state_list_coup)
+
+## simulate an independent network
+state_list_ind = [[0,1]]
+for i in range(len(times)):
+    state_list_ind.append(lpf.next_state(state_list_ind[-1],
+                                     state_table=state_table,
+                                     tmtrx = tmtrx_ind).T)
+state_list_ind = np.array(state_list_ind)
+
 ## break out the signals
 cell_A_ind = np.array([state_list_ind[:,0]])
 cell_B_ind = np.array([state_list_ind[:,1]])
@@ -161,8 +177,8 @@ cell_B_ind_F = scipy.signal.convolve(np.squeeze(cell_B_ind),slow_kernel)
 cell_A_coup_F = scipy.signal.convolve(np.squeeze(cell_A_coup),slow_kernel)
 cell_B_coup_F =scipy.signal.convolve(np.squeeze(cell_B_coup),slow_kernel)
 
-layout.axes['ind_transition'].pcolor(tmtrx_ind[:,::-1].T,cmap = plt.cm.viridis)
-layout.axes['coup_transition'].pcolor(tmtrx_coup[:,::-1].T,cmap = plt.cm.viridis)
+layout.axes['ind_transition'].pcolor(tmtrx_ind.T[::-1],cmap = plt.cm.viridis)
+layout.axes['coup_transition'].pcolor(tmtrx_coup.T[::-1],cmap = plt.cm.viridis)
 
 layout.axes['ind_cell_A'].imshow(cell_A_ind[:,1500:1600],
                                  aspect = 'auto',
@@ -201,8 +217,12 @@ layout.axes['ind_cell_B_ts'].patch.set_facecolor('None')
 layout.axes['coup_cell_A_ts'].patch.set_facecolor('None')
 layout.axes['coup_cell_B_ts'].patch.set_facecolor('None')
 
-layout.axes['ind_GCaMP_state'].plot(cell_A_ind_F[1000:-5000:10],cell_B_ind_F[1000:-5000:10],'o',alpha = 0.2,color = 'k',clip_on = False)
-layout.axes['coup_GCaMP_state'].plot(cell_A_coup_F[1000:-5000:10],cell_B_coup_F[1000:-5000:10],'o',alpha = 0.2,color = 'k',clip_on = False)
+layout.axes['ind_GCaMP_state'].plot(cell_A_ind_F[1000:-9000:10],
+                                    cell_B_ind_F[1000:-9000:10],
+                                    'o',alpha = 0.1,color = 'k',clip_on = False)
+layout.axes['coup_GCaMP_state'].plot(cell_A_coup_F[1000:-9000:10],
+                                     cell_B_coup_F[1000:-9000:10],
+                                     'o',alpha = 0.1,color = 'k',clip_on = False)
 ###########
 layout.axes['ind_GCaMP_state'].set_xlabel('cell A')
 layout.axes['coup_GCaMP_state'].set_xlabel('cell A')
@@ -215,7 +235,11 @@ layout.axes['coup_GCaMP_state'].set_xbound(0,16)
 layout.axes['ind_GCaMP_state'].set_ybound(0,16)
 layout.axes['coup_GCaMP_state'].set_ybound(0,16)
 
-arrow_params = dict(shape = 'right',width = 0.01,length_includes_head = True,facecolor = 'k',clip_on = False)
+arrow_params = dict(shape = 'right',
+                    width = 0.01,
+                    length_includes_head = True,
+                    facecolor = 'k',
+                    clip_on = False)
 layout.axes['ind_state'].arrow(1.1,0.1,0,0.9,**arrow_params)
 layout.axes['ind_state'].arrow(1.2,1.0,0,-0.9,**arrow_params)
 
@@ -378,7 +402,7 @@ ax_observed_left = lg[u'observed_states'][u'left']
 ax_observed_right = lg[u'observed_states'][u'right']
 ax_sim_left = lg[u'simulated_states'][u'left']
 ax_sim_right = lg[u'simulated_states'][u'right']
-
+ax_key = lg['key']
 sorted_keys = sorted(flylist[0].spikestates.keys())
 
 cull_list = [('left', 'bkg'),('right', 'bkg'),
@@ -408,6 +432,15 @@ for i in range(5000):
                                            state_table,
                                            transition_mtrx))
 simulated_states = np.array(simulated_state_list).T
+
+#from numpy import random
+#shuffled_mtrx = random.permutation(transition_mtrx.T).T
+#simulated_shuffled_list = [state_table[10]]
+#for i in range(5000):
+#    simulated_shuffled_list.append(lpf.next_state(simulated_shuffled_list[-1],
+#                                           state_table,
+#                                           shuffled_mtrx))
+#simulated_shuffled = np.array(simulated_shuffled_list).T
 
 
 extnt = [0,0.02*1000,0,3]
@@ -467,6 +500,19 @@ ax_lbls_left.set_ybound(state_table.shape[0]+1)
 
 ax_lbls_top.set_ybound(state_table.shape[1]*3)
 ax_lbls_top.set_xbound(state_table.shape[0]+0.9)
+
+
+img = plt.cm.viridis(([np.log(np.linspace(0.1,1.0,10))/np.log(0.1)]))
+img = img[:,::-1]
+img[:,0] = np.array([0,0,0,0])
+
+ax_key.imshow(img,
+              interpolation = 'nearest',
+              aspect = 'auto',
+              extent= (0,1,0.1,1.0))
+
+ax_key.set_xticks(np.linspace(0.1,1.0,4))
+ax_key.set_xlabel('transition probability')
 
 #######################
 #######################
