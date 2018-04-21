@@ -1,22 +1,21 @@
 Ephys:
-- Add setup image
-- Fix labels on spines
-- Muscle labels 
+X Add setup image
+X Fix labels on spines
+X Muscle labels 
 
 Connectome:
-- Add key
+X Add key
 
 Ephys test:
-- Change colors to anything but red and green
+X Change colors to anything but red and green
 
 Transition triggered av:
 - Breakout a few comparisons
-- Colors to match l/r in other figures
+X Colors to match l/r in other figures
 
 Figure 7:
 - Add full state transition analysis (distribution of all possible states)
 - Motivate pruned transition matrix.
-- Add simulation from shuffled tmtrx
 
 Figure 8:
 - Summary stats on states

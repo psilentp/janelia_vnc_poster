@@ -47,7 +47,8 @@ trig_panel_data = dict(ts = ts,
                        posttrig = posttrig,
                        state_mtrx_dict = state_mtrx_dict,
                        sorted_keys = sorted_keys,
-                       flydict= flydict)
+                       flydict= flydict,
+                       colors = {'l':c_l,'r':c_r})
 def frmt(ax):
     pass
     #ax.set_ybound(0,1)
@@ -362,11 +363,12 @@ max_ca = np.max(decon_fly.ca_camera_left_model_fits['i1'])
 layout.axes['decon_ca_outset'].plot(decon_fly.ca_camera_left_times,
                         decon_fly.ca_camera_left_model_fits['i1']/max_ca,color = 'k')
 layout.axes['decon_ca_outset'].set_xbound(0,100)
+layout.axes['decon_ca_outset'].set_yticks([0,1])
 layout.axes['decon_ca_outset'].set_ylabel('i1 [Ca++]\n(AU)')
 
 layout.axes['decon_spikes_outset'].plot(ep_times,i1_spike_sig*-1,color = 'k')
 layout.axes['decon_spikes_outset'].set_xbound(0,100)
-layout.axes['decon_spikes_outset'].set_yticks([0,1])
+layout.axes['decon_spikes_outset'].set_yticks([-4,8])
 layout.axes['decon_spikes_outset'].set_ylabel(u'i1 EMG\n(${\mu}$V)')
 
 
@@ -374,9 +376,10 @@ layout.axes['decon_ca_inset'].plot(decon_fly.ca_camera_left_times,
                                decon_fly.ca_camera_left_model_fits['i1']/max_ca,color = 'k')
 layout.axes['decon_ca_inset'].set_xbound(40,41.5)
 layout.axes['decon_ca_inset'].set_xticks([40,40.5,41.0,41.5])
+layout.axes['decon_ca_inset'].set_yticks([0,1])
 
 layout.axes['decon_spikes_inset'].plot(ep_times,i1_spike_sig*-1,color = 'k')
-layout.axes['decon_spikes_inset'].set_yticks([0,1])
+layout.axes['decon_spikes_inset'].set_yticks([-4,8])
 layout.axes['decon_spikes_inset'].set_xbound(40.0,41.5)
 layout.axes['decon_spikes_inset'].set_xticks([40,40.5,41.0,41.5])
 layout.axes['decon_spikes_inset'].set_ylabel(u'i1 EMG\n(${\mu}$V)')
@@ -386,6 +389,8 @@ layout.axes['decon_kernel'].plot(np.linspace(0,1.,1000),
                                  TAU_ON_S,TAU_OFF_S),color = 'k')
 layout.axes['decon_kernel'].set_xlabel('time (s)')
 layout.axes['decon_kernel'].set_ylabel('GCaMP')
+
+layout.axes['electrode_implant'].imshow(decon_fly.ca_camera_left[2600][:,50:],cmap = plt.cm.gray)
 
 ##########################
 # Markov sequence panels #
@@ -522,17 +527,20 @@ t2 = 40
 slice_1 = slice(np.searchsorted(fly.time,t1),np.searchsorted(fly.time,t2))
 #slice_2 = slice(np.searchsorted(fly.time,t3),np.searchsorted(fly.time,t4))
 
+kw_recon = layout.pathspecs['reconstructed'].mplkwargs()
+kw_record = layout.pathspecs['recorded'].mplkwargs()
+
 for lr,group in layout.axes_groups['none']['segment_1'].items():
     for key,ax in group['spikes'].items():
         ax.fill_between(fly.time[slice_1],fly.spikestates[lr,key][slice_1],0,color = 'k')
         ax.set_zorder(-30)
         ax.patch.set_facecolor('none')
     for key,ax in group['reconstruction'].items():
-        ax.plot(fly.time[slice_1],fly.ca_reconstructions[lr,key][slice_1],color = 'r')
+        ax.plot(fly.time[slice_1],fly.ca_reconstructions[lr,key][slice_1],**kw_recon)
         ax.set_zorder(-20)
         ax.patch.set_facecolor('none')
     for key,ax in group['ca'].items():
-        ax.plot(fly.time[slice_1],fly.non_neg_signals[lr,key][slice_1],color = 'g')
+        ax.plot(fly.time[slice_1],fly.non_neg_signals[lr,key][slice_1],**kw_record)
         ax.set_zorder(-10)
         ax.patch.set_facecolor('none')
             
@@ -544,3 +552,4 @@ layout.apply_mpl_methods()
 fifi.mpl_functions.set_spines(layout)
 
 layout.save('poster.svg')
+plt.close('all')

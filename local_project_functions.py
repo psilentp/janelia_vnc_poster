@@ -24,7 +24,8 @@ def plot_trig_panel(ax_group,
                     posttrig = 50,
                     state_mtrx_dict = None,
                     sorted_keys = None,
-                    flydict = None):
+                    flydict = None,
+                    colors = None):
     from matplotlib import pyplot as plt
     time = np.arange(pretrig+posttrig)*ts
     idx_list = get_transitions(state_mtrx_dict,trig_key,pretrig,posttrig)
@@ -39,12 +40,12 @@ def plot_trig_panel(ax_group,
     ax_group['raster'].imshow(rast_mtrx,
                aspect = 'auto',interpolation = 'nearest',extent = [0,time[-1],0,100],cmap = plt.cm.binary)
     ax_group['raster'].set_ybound(0,100)
-    ax_group['kine'].plot(time,np.rad2deg(np.nanmean(signal_mtrxs['left','amp'][filter_cond,:],axis = 0)))
-    ax_group['kine'].plot(time,np.rad2deg(np.nanmean(signal_mtrxs['right','amp'][filter_cond,:],axis = 0)))
+    ax_group['kine'].plot(time,np.rad2deg(np.nanmean(signal_mtrxs['left','amp'][filter_cond,:],axis = 0)),color = colors['l'])
+    ax_group['kine'].plot(time,np.rad2deg(np.nanmean(signal_mtrxs['right','amp'][filter_cond,:],axis = 0)),color = colors['r'])
     for key,ax in ax_group['left'].items():
-        ax.plot(time,np.nanmean(signal_mtrxs['left',key][filter_cond,:],axis = 0),color = 'b')
+        ax.plot(time,np.nanmean(signal_mtrxs['left',key][filter_cond,:],axis = 0),color = colors['l'])
     for key,ax in ax_group['right'].items():
-        ax.plot(time,np.nanmean(signal_mtrxs['right',key][filter_cond,:],axis = 0),color = 'g')
+        ax.plot(time,np.nanmean(signal_mtrxs['right',key][filter_cond,:],axis = 0),color = colors['r'])
 
 
 def make_state_matrix(flylist,
